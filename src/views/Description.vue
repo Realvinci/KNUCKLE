@@ -41,21 +41,6 @@ export default {
     //...mapGetters(['getProduct'])
    },
    methods:{
-    async getProd(){
-       try {
-        let id = this.id.id
-       const data = await fetch(`https://fakestoreapi.com/products/${id}`).then(res=>res.json())
-        console.log(data);
-            this.product = {
-              name:data.title,
-              price:data.price,
-              description:data.description,
-              image:data.image
-            }
-      } catch (error) {
-        console.log(error)
-      }
-    },
      async getParticular(){
       let id = this.id.id
       const allProducts = collection(db,"products");
@@ -75,7 +60,7 @@ export default {
     ...mapActions(['addToCart','addToFirestore'])
    },
    created(){
-   // this.getProd();
+    //this.getProd();
     this.getParticular();
    }
 }
