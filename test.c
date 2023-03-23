@@ -1,6 +1,10 @@
 #include <stdio.sh>
 
 int main(){
-      printf("%d","Hello world");
-    return 0
+    int i ;
+       printf("Enter a number");
+       scanf("%d",i)
+       printf(i);
+      printf("Hello world");
+    return 0;
 }
