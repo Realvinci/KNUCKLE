@@ -11,7 +11,7 @@
               <h2 class="lead">{{ product.name }}</h2>
                 <p class="lead">{{ product.description }}</p>
                 <h4>Rate:<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half"></i></h4>
-                <button @click="addToCart(product)" class="btn btn-danger"><i class="fa-solid fa-cart-shopping"></i></button>
+                <button @click="addToFirestore(product)" class="btn btn-danger"><i class="fa-solid fa-cart-shopping"></i></button>
            </div>
        </div>
     </div>
@@ -60,7 +60,6 @@ export default {
       let id = this.id.id
       const allProducts = collection(db,"products");
      const product = query(allProducts,where("id","==",id))
-     console.log(9);
       const querySnapshot = await getDocs(product);
       querySnapshot.forEach((doc)=>{
           console.log(doc.data());
@@ -73,7 +72,7 @@ export default {
           }
       })
      },
-    ...mapActions(['addToCart'])
+    ...mapActions(['addToCart','addToFirestore'])
    },
    created(){
    // this.getProd();
