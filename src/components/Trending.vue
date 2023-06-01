@@ -13,7 +13,7 @@
     </div>
     </div>
     {{ email }}
-    {{ getCart }}
+
   </div>
 </template>
 
@@ -45,82 +45,11 @@ export default {
    }
  },
 
-
-//    async  addTofirestore(payload){
-//   //check for logged in
-//   let email;
-//   let userid;
-//   let cart = [];
-//   let signed = this.login()
-//   if(signed){
-//      //get the email
-//      let signinToken = localStorage.getItem('signinToken')
-//      let DecryptedToken = jwt_decode(signinToken)
-//      email = DecryptedToken.email
-//      //search the user get the userid and retrieve the cart and privaleges
-//      if(email){
-//         const usersRef = collection(db,"users")
-//         const q = query(usersRef,where("email",'==',email))  
-//         const querySnapshot = await getDocs(q);
-//         querySnapshot.forEach((doc)=>{
-//             if(doc.data().email==email){
-               
-//                 //function to return docid
-//                 const usercartref = doc(db,"users",this.userRefid)
-//                 console.log(doc.data().cart)
-//                 cart = [...doc.data().cart]
-//                 console.log('this is the cart properties=>',cart)
-//                 for(let item of cart){
-//                    if(item.id!=payload.id){
-//                        cart.push(payload)
-                      
-//                        updateDoc(usercartref,{
-//                         cart:cart
-//                        }) 
-//                    }else{
-//                      alert('Item exists')
-//                    }
-//                 }
-//                 console.log('This is the cart state after adding the product=>',cart)
-//             }
-//         })
-//       //   const usercartref = doc(db,"users",userid)
-//       //   updateDoc(usercartref,{
-//       //     cart:cart.flat(),
-//       //   })
-//         alert('added to cart')
-//      }
-//   }else{
-//      alert('signin with directing the user to login page')
-//   }
-// },
-
- async getUserRef(){
-     const usersRef = collection(db,"users")
-     const q = query(usersRef,where("email",'==',this.email))
-     const querySnapshot = await getDocs(q)
-     querySnapshot.forEach((doc)=>{
-       if(doc.data().email == this.email){
-            this.userRefid = doc.id
-            console.log(this.userRefid)
-       }
-     })
- },
-    checkforparticularuser(){
-    let token = localStorage.getItem('signinToken')
-    token = JSON.stringify(token)
-     let DecryptedToken =  jwt_decode(token)
-      this.email = DecryptedToken.email
-    // return  this.email
-
- },
-
  },
  created(){
    this.getProductsfromfirebase()
-   this.checkforparticularuser();
-   this.getUserCart();
-   this.getUserRef();
+
+
  },
  computed:{
     ...mapGetters(['getFirestoredata','getCart'])

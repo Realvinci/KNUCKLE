@@ -60,7 +60,6 @@ export default {
     ...mapActions(['addToCart','addToFirestore'])
    },
    created(){
-    //this.getProd();
     this.getParticular();
    }
 }
