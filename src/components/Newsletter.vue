@@ -1,151 +1,37 @@
 <template>
-  <section class="section product" id="product" aria-label="product">
-   <div class="container">
+  <section class="section newsletter" aria-label="newsletter">
+  <div class="container">
 
-     <div class="title-wrapper">
-       <h2 class="h2 section-title">Popular Products</h2>
+    <div class="newsletter-card">
 
-       <ul class="filter-btn-list">
+      <div class="card-content">
+        <h2 class="h2 section-title">Our Newsletter</h2>
 
-         <li class="filter-btn-item">
-           <button class="filter-btn active" data-filter-btn="all">All Products</button>
-         </li>
+        <p class="section-text">
+          Subscribe our newsletter and get discount 50% off
+        </p>
+      </div>
 
-         <li class="filter-btn-item">
-           <button class="filter-btn" data-filter-btn="accessory">Accessory</button>
-         </li>
+      <form action="" class="card-form">
+        <input type="email" name="email_address" placeholder="Your email address" required class="email-field">
 
-         <li class="filter-btn-item">
-           <button class="filter-btn" data-filter-btn="decoration">Decoration</button>
-         </li>
+        <button type="submit" class="newsletter-btn" aria-label="subscribe">
+          <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
+        </button>
+      </form>
 
-         <li class="filter-btn-item">
-           <button class="filter-btn" data-filter-btn="furniture">Furniture</button>
-         </li>
+    </div>
 
-       </ul>
-     </div>
-
-     <ul class="grid-list product-list" data-filter="all">
-
-       <li class="accessory" v-for="product in getFirestoredata" :key="product.id">
-         <div class="product-card">
-
-           <div class="card-banner img-holder has-before" style="--width: 300; --height: 300;">
-             <img :src="product.image" width="300" height="300" loading="lazy" alt="Art Deco Home"
-               class="img-cover">
-
-             <ul class="card-action-list">
-
-               <li>
-                 <button @click="addTocart(product)"  class="card-action-btn" >
-                   <ion-icon name="add-outline" aria-hidden="true">
-                     <i class="fa-solid fa-plus"></i>
-                   </ion-icon>
-                 </button>
-               </li>
-
-               <li>
-                 <button @click="addTocart(product)"  class="card-action-btn" >
-                   <ion-icon name="bag-handle-outline" aria-hidden="true">
-                     <i class="fa-solid fa-cart-shopping"></i>
-                   </ion-icon>
-                 </button>
-               </li>
-
-               <li>
-                 <button class="card-action-btn" @click=" addTowishlist(product)">
-                   <ion-icon name="heart-outline" aria-hidden="true">
-                     <i class="fa-solid fa-heart" style="color:red;"></i>
-                   </ion-icon>
-                 </button>
-               </li>
-
-             </ul>
-
-           
-           </div>
-
-           <div class="card-content">
-             <h3 class="h3">
-               <a href="#" class="card-title">{{ product.name }}</a>
-             </h3>
-
-             <div class="card-price">
-               <data class="price" value="30">N {{ product.price }}</data>
-             </div>
-           </div>
-
-         </div>
-       </li>
-
-
-
-     </ul>
-
-   </div>
- </section>
+  </div>
+</section>
 </template>
 
 <script>
-import { getFirestore } from 'firebase/firestore';
-import { mapActions,mapGetters } from 'vuex';   
 export default {
-name:'Allproducts',
-data(){
-return{
-   products:[]
-}
-},
-methods:{
-...mapActions(['getProductsfromfirebase','lastAdd','addToFirestore']),
-addTocart(payload){
- //get the cart from localstorage if it exist else form 
-   let cart = localStorage.getItem('cart')
-   if(cart){
-       cart = JSON.parse(cart)
-       console.log('cart before adding',cart)
-      //find the product 
-      let find = cart.find(item=>item.id==payload.id)
-      
-      if(!find){
-         payload.qty = 1
-         cart.push(payload)
-         localStorage.setItem('cart',JSON.stringify(cart))
-         //can i change this sharply to the storage 
-      }else{
-        alert('product exist')
-      }
-   }
-},
-addTowishlist(payload){
- //get the cart from localstorage if it exist else form 
-   let wishlist = localStorage.getItem('wishlist')
-   if(wishlist){
-       wishlist = JSON.parse(cart)
-      // console.log('cart before adding',cart)
-      //find the product 
-      let find = wishlist.find(item=>item.id==payload.id)
-      
-      if(!find){
-        
-         wishlist.push(payload)
-         localStorage.setItem('cart',JSON.stringify(wishlist))
-         //can i change this sharply to the storage 
-      }else{
-        alert('in wishlist')
-      }
-   }
-},
-},
-computed:{
-...mapGetters(['getFirestoredata'])
-},
-created(){
-this.getProductsfromfirebase()
-}
+
 }
 </script>
+
 
 <style scoped>
 /*-----------------------------------*\

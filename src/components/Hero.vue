@@ -1,133 +1,117 @@
 <template>
-   <section class="section blog" id="blog" aria-label="blog">
+    <section class="section hero" id="home" aria-label="home">
          <div class="container">
  
-           <div class="title-wrapper">
-             <h2 class="h2 section-title">Popular</h2>
+           <ul class="hero-list">
  
-           </div>
- <ul class="grid-list product-list" data-filter="all">
+             <li>
+               <div class="hero-card">
  
-   <li class="accessory" v-for="product in getFirestoredata.slice(1,4)" :key="product.id">
-               <div class="product-card">
- 
-                 <div class="card-banner img-holder has-before" style="--width: 300; --height: 300;">
-                   <img :src="product.image" width="300" height="300" loading="lazy" alt="Art Deco Home"
+                 <figure class="card-banner img-holder" style="--width: 285; --height: 396;">
+                   <img src="../assets/carousel3.jpg" width="285" height="396" alt="Art Deco Home"     
                      class="img-cover">
- 
-                   <ul class="card-action-list">
- 
-                     <li>
-                       <button @click="addTocart(product)"  class="card-action-btn" >
-                         <ion-icon name="add-outline" aria-hidden="true">
-                           <i class="fa-solid fa-plus"></i>
-                         </ion-icon>
-                       </button>
-                     </li>
- 
-                     <li>
-                       <button @click="addTocart(product)"  class="card-action-btn" >
-                         <ion-icon name="bag-handle-outline" aria-hidden="true">
-                           <i class="fa-solid fa-cart-shopping"></i>
-                         </ion-icon>
-                       </button>
-                     </li>
- 
-                     <li>
-                       <button class="card-action-btn" @click=" addTowishlist(product)">
-                         <ion-icon name="heart-outline" aria-hidden="true">
-                           <i class="fa-solid fa-heart" style="color:red;"></i>
-                         </ion-icon>
-                       </button>
-                     </li>
- 
-                   </ul>
- 
-                 
-                 </div>
+                 </figure>
  
                  <div class="card-content">
-                   <h3 class="h3">
-                     <a href="#" class="card-title">{{ product.name }}</a>
+                   <h3>
+                     <a href="#" class="card-title"></a>
                    </h3>
  
-                   <div class="card-price">
-                     <data class="price" value="30">N {{ product.price }}</data>
-                   </div>
+                   <p class="card-text"></p>
                  </div>
  
                </div>
              </li>
  
+             <li class="colspan-2">
+               <div class="hero-card">
  
+                 <figure class="card-banner img-holder" style="--width: 568; --height: 389;">
+                   <img src="../assets/carousel2.jpg" width="568" height="389" alt="Helen Chair"
+                     class="img-cover">
+                 </figure>
  
+                 <div class="card-content">
+                   <h3>
+                     <a href="#" class="card-title"></a>
+                   </h3>
  
- </ul>
+                   <p class="card-text"></p>
+                 </div>
+ 
+               </div>
+             </li>
+ 
+             <li>
+               <div class="hero-card">
+ 
+                 <figure class="card-banner img-holder" style="--width: 285; --height: 396;">
+                   <img src="../assets/burger.jpg" width="285" height="396" alt="Vase Of Flowers"
+                     class="img-cover">
+                 </figure>
+ 
+                 <div class="card-content">
+                   <h3>
+                     <a href="#" class="card-title"></a>
+                   </h3>
+ 
+                   <p class="card-text"></p>
+                 </div>
+ 
+               </div>
+             </li>
+ 
+             <li class="colspan-2">
+               <div class="hero-card">
+ 
+                 <figure class="card-banner img-holder" style="--width: 580; --height: 213;">
+                   <img src="../assets/carousel1.jpg" width="580" height="213" alt="Wood Eggs"
+                     class="img-cover">
+                 </figure>
+ 
+                 <div class="card-content">
+                   <h3>
+                     <a href="#" class="card-title"></a>
+                   </h3>
+ 
+                   <p class="card-text"></p>
+                 </div>
+ 
+               </div>
+             </li>
+ 
+             <li class="colspan-2">
+               <div class="hero-card">
+ 
+                 <figure class="card-banner img-holder" style="--width: 580; --height: 213;">
+                   <img src="../assets/burger.jpg" width="580" height="213" alt="Table Wood Pine"
+                     class="img-cover">
+                 </figure>
+ 
+                 <div class="card-content">
+                   <h3>
+                     <a href="#" class="card-title"></a>
+                   </h3>
+ 
+                   <p class="card-text"></p>
+                 </div>
+ 
+               </div>
+             </li>
+ 
+           </ul>
  
          </div>
+        
        </section>
  </template>
  
- 
- 
  <script>
- import { mapActions,mapGetters } from 'vuex';   
  export default {
-    name:'Allproducts',
-    data(){
-     return{
-         products:[]
-     }
-    },
-    methods:{
-     ...mapActions(['getProductsfromfirebase','lastAdd','addToFirestore']),
-     addTocart(payload){
-       //get the cart from localstorage if it exist else form 
-         let cart = localStorage.getItem('cart')
-         if(cart){
-             cart = JSON.parse(cart)
-             console.log('cart before adding',cart)
-            //find the product 
-            let find = cart.find(item=>item.id==payload.id)
-            
-            if(!find){
-               payload.qty = 1
-               cart.push(payload)
-               localStorage.setItem('cart',JSON.stringify(cart))
-               //can i change this sharply to the storage 
-            }else{
-              alert('product exist')
-            }
-         }
-     },
-     addTowishlist(payload){
-       //get the cart from localstorage if it exist else form 
-         let wishlist = localStorage.getItem('wishlist')
-         if(wishlist){
-             wishlist = JSON.parse(cart)
-            // console.log('cart before adding',cart)
-            //find the product 
-            let find = wishlist.find(item=>item.id==payload.id)
-            
-            if(!find){
-              
-               wishlist.push(payload)
-               localStorage.setItem('cart',JSON.stringify(wishlist))
-               //can i change this sharply to the storage 
-            }else{
-              alert('in wishlist')
-            }
-         }
-     },
-    },
-    computed:{
-     ...mapGetters(['getFirestoredata'])
-    },
-    created(){
-     this.getProductsfromfirebase()
-    }
+ 
  }
  </script>
+ 
  <style scoped>
  /*-----------------------------------*\
    #style.css

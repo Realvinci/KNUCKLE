@@ -51,8 +51,8 @@
 
 <script>
 import {app as app } from '../../firebase'
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { getFirestore,collection, addDoc  } from "firebase/firestore";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
+import {collection,addDoc,updateDoc,doc,arrayUnion,getFirestore } from "firebase/firestore"
 import {v4 as uuidv4} from 'uuid';
 const db = getFirestore(app);
 
@@ -111,22 +111,25 @@ export default {
 );
      },
 async AddToDatabase(){
+  const productsRef = doc(db,"products","products");
 try {
     if(this.product.name=='' || this.product.price=='' || this.product.vendor =='' || this.product.description=='' ){
      alert('Fill all inputs');
      return;
     }else{
-    const docRef = await addDoc(collection(db, "products"), {
-    name: this.product.name,
+    
+    await updateDoc(productsRef, {
+    products:arrayUnion({name: this.product.name,
     price: Number(this.product.price),
     image:this.imageurl,
     vendor:this.product.vendor,
     description:this.product.description,
     id:uuidv4(),
-    defaultPrice:Number(this.price)
-  });
+    defaultPrice:Number(this.product.price)})
+  })
+  
   this.ClearField();
-  console.log("Document written with ID: ", docRef.id);
+  //console.log("Document written with ID: ", docRef.id);
 }
  
 } catch (e) {

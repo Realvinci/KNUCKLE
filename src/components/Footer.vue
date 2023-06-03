@@ -1,133 +1,148 @@
 <template>
-   <section class="section blog" id="blog" aria-label="blog">
-         <div class="container">
+    <footer class="footer">
+     <div class="container">
  
-           <div class="title-wrapper">
-             <h2 class="h2 section-title">Popular</h2>
+       <div class="footer-top section">
  
-           </div>
- <ul class="grid-list product-list" data-filter="all">
+         <div class="footer-brand">
  
-   <li class="accessory" v-for="product in getFirestoredata.slice(1,4)" :key="product.id">
-               <div class="product-card">
+           <a href="#" class="logo">Knuckles</a>
  
-                 <div class="card-banner img-holder has-before" style="--width: 300; --height: 300;">
-                   <img :src="product.image" width="300" height="300" loading="lazy" alt="Art Deco Home"
-                     class="img-cover">
+           <ul>
  
-                   <ul class="card-action-list">
+             <li class="footer-list-item">
+               <ion-icon name="location-sharp" aria-hidden="true"></ion-icon>
  
-                     <li>
-                       <button @click="addTocart(product)"  class="card-action-btn" >
-                         <ion-icon name="add-outline" aria-hidden="true">
-                           <i class="fa-solid fa-plus"></i>
-                         </ion-icon>
-                       </button>
-                     </li>
- 
-                     <li>
-                       <button @click="addTocart(product)"  class="card-action-btn" >
-                         <ion-icon name="bag-handle-outline" aria-hidden="true">
-                           <i class="fa-solid fa-cart-shopping"></i>
-                         </ion-icon>
-                       </button>
-                     </li>
- 
-                     <li>
-                       <button class="card-action-btn" @click=" addTowishlist(product)">
-                         <ion-icon name="heart-outline" aria-hidden="true">
-                           <i class="fa-solid fa-heart" style="color:red;"></i>
-                         </ion-icon>
-                       </button>
-                     </li>
- 
-                   </ul>
- 
-                 
-                 </div>
- 
-                 <div class="card-content">
-                   <h3 class="h3">
-                     <a href="#" class="card-title">{{ product.name }}</a>
-                   </h3>
- 
-                   <div class="card-price">
-                     <data class="price" value="30">N {{ product.price }}</data>
-                   </div>
-                 </div>
- 
-               </div>
+               <address class="address">
+                 Knuckles, Benue, Nigeria 2022
+               </address>
              </li>
  
+             <li class="footer-list-item">
+               <ion-icon name="call-sharp" aria-hidden="true"></ion-icon>
  
+               <a href="tel:+1234567890" class="footer-link">+1234567890</a>
+             </li>
  
+             <li>
+               <ul class="social-list">
  
- </ul>
+                 <li>
+                   <a href="#" class="social-link">
+                     <ion-icon name="logo-facebook"></ion-icon>
+                   </a>
+                 </li>
+ 
+                 <li>
+                   <a href="#" class="social-link">
+                     <ion-icon name="logo-twitter"></ion-icon>
+                   </a>
+                 </li>
+ 
+                 <li>
+                   <a href="#" class="social-link">
+                     <ion-icon name="logo-tumblr"></ion-icon>
+                   </a>
+                 </li>
+ 
+               </ul>
+             </li>
+ 
+           </ul>
  
          </div>
-       </section>
+ 
+         <ul class="footer-list">
+ 
+           <li>
+             <p class="footer-list-title">Help & Information</p>
+           </li>
+ 
+           <li>
+             <a href="#" class="footer-link">Help & Contact Us</a>
+           </li>
+ 
+           <li>
+             <a href="#" class="footer-link">Returns & Refunds</a>
+           </li>
+ 
+           <li>
+             <a href="#" class="footer-link">Online Stores</a>
+           </li>
+ 
+           <li>
+             <a href="#" class="footer-link">Terms & Conditions</a>
+           </li>
+ 
+         </ul>
+ 
+         <ul class="footer-list">
+ 
+           <li>
+             <p class="footer-list-title">About Us</p>
+           </li>
+ 
+           <li>
+             <a href="#" class="footer-link">About Us</a>
+           </li>
+ 
+           <li>
+             <a href="#" class="footer-link">What We Do</a>
+           </li>
+ 
+           <li>
+             <a href="#" class="footer-link">FAQ Page</a>
+           </li>
+ 
+           <li>
+             <a href="#" class="footer-link">Contact Us</a>
+           </li>
+ 
+         </ul>
+ 
+         <div class="footer-list">
+ 
+           <p class="footer-list-title">Newsletter</p>
+ 
+           <form action="" class="footer-form">
+             <input type="email" name="email_address" placeholder="Your email address" required class="email-field">
+ 
+             <button type="submit" class="footer-form-btn">
+               <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
+             </button>
+           </form>
+ 
+           <div class="wrapper">
+ 
+             <a href="#" class="footer-link">Term & Condition</a>
+             <a href="#" class="footer-link">Policy</a>
+             <a href="#" class="footer-link">Map</a>
+ 
+           </div>
+ 
+         </div>
+ 
+       </div>
+ 
+       <div class="footer-bottom">
+ 
+         <p class="copyright">
+           &copy; 2022 All Rights Reserved by <a href="#" class="copyright-link">codewithsadee</a>.
+         </p>
+ 
+       </div>
+ 
+     </div>
+   </footer>
  </template>
  
- 
- 
  <script>
- import { mapActions,mapGetters } from 'vuex';   
  export default {
-    name:'Allproducts',
-    data(){
-     return{
-         products:[]
-     }
-    },
-    methods:{
-     ...mapActions(['getProductsfromfirebase','lastAdd','addToFirestore']),
-     addTocart(payload){
-       //get the cart from localstorage if it exist else form 
-         let cart = localStorage.getItem('cart')
-         if(cart){
-             cart = JSON.parse(cart)
-             console.log('cart before adding',cart)
-            //find the product 
-            let find = cart.find(item=>item.id==payload.id)
-            
-            if(!find){
-               payload.qty = 1
-               cart.push(payload)
-               localStorage.setItem('cart',JSON.stringify(cart))
-               //can i change this sharply to the storage 
-            }else{
-              alert('product exist')
-            }
-         }
-     },
-     addTowishlist(payload){
-       //get the cart from localstorage if it exist else form 
-         let wishlist = localStorage.getItem('wishlist')
-         if(wishlist){
-             wishlist = JSON.parse(cart)
-            // console.log('cart before adding',cart)
-            //find the product 
-            let find = wishlist.find(item=>item.id==payload.id)
-            
-            if(!find){
-              
-               wishlist.push(payload)
-               localStorage.setItem('cart',JSON.stringify(wishlist))
-               //can i change this sharply to the storage 
-            }else{
-              alert('in wishlist')
-            }
-         }
-     },
-    },
-    computed:{
-     ...mapGetters(['getFirestoredata'])
-    },
-    created(){
-     this.getProductsfromfirebase()
-    }
+ 
  }
  </script>
+ 
+ 
  <style scoped>
  /*-----------------------------------*\
    #style.css

@@ -1,36 +1,66 @@
 <template>
-    <div>
-      <div>
-<table class="table container" style="width:500px; border:1px solid #000; margin-top:10px;">
-  <thead>
-    <tr>
-      <th scope="col">Image</th>
-      <th scope="col">Qty</th>
-      <th scope="col">Price</th>
-    </tr>
-  </thead>
-  <tbody v-for="product in getCart" :key="product.id">
-    <tr>
-      <th scope="row">
-        <img :src="product.image" class="rounded" style="width:50px;">
-      </th>
-       
-      <button id="decrease" style="margin-top:10px;" @click="decrease(product)">-</button>
-      <button id="increase" style="margin-top:10px;"  @click="increase(product)">+</button>
-      <td> {{ product.qty }} x {{ product.price }}</td>
-      <i @click="removeFromFBCart(product)" class="fa-solid fa-trash"></i>
-    </tr>
-  </tbody>
-</table>
+  <section class="h-100" style="background-color: #eee;">
+  <div class="container h-100 py-5">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-10">
 
-    <h4 class="mr-auto;"></h4>   
-      
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="fw-normal mb-0 text-black">Shopping Cart</h3>
+          
+        </div>
+
+        <div class="card rounded-3 mb-4" v-for="product in testCart" :key="product.id">
+          <div class="card-body p-4">
+            <div class="row d-flex justify-content-between align-items-center">
+              <div class="col-md-2 col-lg-2 col-xl-2">
+                <img
+                  :src="product.image"
+                  class="img-fluid rounded-3" alt="Cotton T-shirt">
+              </div>
+              <div class="col-md-3 col-lg-3 col-xl-3">
+                <p class="lead fw-normal mb-2">{{ product.name }}</p>
+              </div>
+              <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                <button  @click="decreaseqty(product)" class="btn btn-link px-2">
+                  <i class="fas fa-minus"></i>
+                </button>
+
+                <input id="form1" min="0" name="quantity"  type="number" v-model="product.qty"
+                  class="form-control form-control-sm" />
+
+                <button  @click="increaseqty(product)" class="btn btn-link px-2">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                <h5 class="mb-0">N {{ product.price }}</h5>
+              </div>
+              <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                <a href="#!" class="text-danger"><i @click="deleteItem(product)" class="fas fa-trash fa-lg"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+          <div>
+              <h3>N{{ Total }}</h3>
+          </div>
+
+        <div class="card">
+          <div class="card-body">
+          <router-link to="/shipping">
+            <button type="button" class="btn btn-warning btn-block btn-lg" @click="getFromls">Proceed to Pay</button>
+          </router-link>
+          </div>
+          <router-link to="/">
+            <button type="button" class="btn btn-warning btn-block btn-lg" @click="getFromls">Home</button>
+          </router-link>
+        </div>
+
       </div>
-      {{ GetTotal }}
-      <router-link to="/shipping">
-        <button @click="getUserCart">Shipping</button>
-      </router-link>
-</div>    
+    </div>
+  </div>
+</section>
+   
 </template>
     
 <script>  
@@ -48,110 +78,163 @@ export default {
        qty:'',
        email:'',
        userref:'',
-       Cart:[]
+       Cart:[],
+       testCart:[],
+       Total:0
     }
    },
-
+   watch:{
+     
+   },
    methods:{
-     ...mapActions(['getUserCart','removeFromFBCart','getPrice','getInputqty']),
-     getInput(product){
-      //  let input = document.getElementById("input").value
-      //  this.getInputqty(input,product)
-       let input = document.getElementById("input").value
-       console.log(input)
-     },
-      mail(){
-        let signinToken = localStorage.getItem('signinToken')
-        let DecryptedToken = jwt_decode(signinToken)
-         this.email = DecryptedToken.email
-       },
-       async docRef(){ 
-        try {
-          const query = await getDocs(collection(db,"users"))
-          query.forEach((doc)=>{
-             if(doc.data().email===this.email){
-                this.userref = doc.id
-             }
-          })
-        } catch (error) {
-          console.log(error)
-        } 
+    // ...mapActions(['getUserCart','removeFromFBCart','getPrice','getInputqty']),
+    //  getInput(product){
+    //   //  let input = document.getElementById("input").value
+    //   //  this.getInputqty(input,product)
+    //    let input = document.getElementById("input").value
+    //    console.log(input)
+    //  },
+    //   mail(){
+    //     let signinToken = localStorage.getItem('signinToken')
+    //     let DecryptedToken = jwt_decode(signinToken)
+    //      this.email = DecryptedToken.email
+    //    },
+    //    async docRef(){ 
+    //     try {
+    //       const query = await getDocs(collection(db,"users"))
+    //       query.forEach((doc)=>{
+    //          if(doc.data().email===this.email){
+    //             this.userref = doc.id
+    //          }
+    //       })
+    //     } catch (error) {
+    //       console.log(error)
+    //     } 
         
-      },
+    //   },
      //get firebase qty and make it the qty on this.qty
-     async getqty(payload){
-       const usersRef = collection(db,"users")
-       let productIndex;
-       const usercartref = doc(db,"users",this.userref)
-       const q = query(usersRef,where("email",'==',this.email))  
-       const querySnapshot = await getDocs(q)
-       querySnapshot.forEach((doc)=>{
-           if(doc.data().email===this.email){
-              this.Cart = [...doc.data().cart]
-              let product= this.Cart.find(product=>product.id==payload.id)
-               productIndex = this.Cart.findIndex(product=>product.id==payload.id)
-           }
-       })
-        this.Cart[productIndex].qty = Number(this.qty)
-        console.log(this.Cart)
-      },
-      async increase(payload){
-         const usersRef = collection(db,"users")
+    //  async getqty(payload){
+    //    const usersRef = collection(db,"users")
+    //    let productIndex;
+    //    const usercartref = doc(db,"users",this.userref)
+    //    const q = query(usersRef,where("email",'==',this.email))  
+    //    const querySnapshot = await getDocs(q)
+    //    querySnapshot.forEach((doc)=>{
+    //        if(doc.data().email===this.email){
+    //           this.Cart = [...doc.data().cart]
+    //           let product= this.Cart.find(product=>product.id==payload.id)
+    //            productIndex = this.Cart.findIndex(product=>product.id==payload.id)
+    //        }
+    //    })
+    //     this.Cart[productIndex].qty = Number(this.qty)
+    //     console.log(this.Cart)
+    //   },
+      // async increase(payload){
+      //    const usersRef = collection(db,"users")
          
-         const q = query(usersRef,where("email","==",this.email))
-         const usercartref = doc(db,"users",this.userref)
-         const querySnapshot = await getDocs(q)
-         querySnapshot.forEach((doc)=>{
-          if(doc.data().email == this.email){
-              this.Cart = [...doc.data().cart]
-             let product = this.Cart.find(product=>product.id==payload.id)
-             if(product){
-               product.qty++
-               updateDoc(usercartref,{
-                cart:this.Cart
-              })
-              window.location.reload()
-             }
-          }
-         })
-         console.log(this.Cart)
-      },
-      async decrease(payload){
-         const usersRef = collection(db,"users")
+      //    const q = query(usersRef,where("email","==",this.email))
+      //    const usercartref = doc(db,"users",this.userref)
+      //    const querySnapshot = await getDocs(q)
+      //    querySnapshot.forEach((doc)=>{
+      //     if(doc.data().email == this.email){
+      //         this.Cart = [...doc.data().cart]
+      //        let product = this.Cart.find(product=>product.id==payload.id)
+      //        if(product){
+      //          product.qty++
+      //          updateDoc(usercartref,{
+      //           cart:this.Cart
+      //         })
+      //         window.location.reload()
+      //        }
+      //     }
+      //    })
+      //    console.log(this.Cart)
+      // },
+      // async decrease(payload){
+      //    const usersRef = collection(db,"users")
          
-         const q = query(usersRef,where("email","==",this.email))
-         const usercartref = doc(db,"users",this.userref)
-         const querySnapshot = await getDocs(q)
-         querySnapshot.forEach((doc)=>{
-          if(doc.data().email == this.email){
-              this.Cart = [...doc.data().cart]
-             let product = this.Cart.find(product=>product.id==payload.id)
-             if(product){
-                if(product.qty>1){
-                  product.qty--
-                }else{
-                   product.qty
-                }
+      //    const q = query(usersRef,where("email","==",this.email))
+      //    const usercartref = doc(db,"users",this.userref)
+      //    const querySnapshot = await getDocs(q)
+      //    querySnapshot.forEach((doc)=>{
+      //     if(doc.data().email == this.email){
+      //         this.Cart = [...doc.data().cart]
+      //        let product = this.Cart.find(product=>product.id==payload.id)
+      //        if(product){
+      //           if(product.qty>1){
+      //             product.qty--
+      //           }else{
+      //              product.qty
+      //           }
                 
-                updateDoc(usercartref,{
-                cart:this.Cart
-              })
-              window.location.reload()
-             }
+      //           updateDoc(usercartref,{
+      //           cart:this.Cart
+      //         })
+      //         window.location.reload()
+      //        }
+      //     }
+      //    })
+      //    console.log(this.Cart)
+      // },
+      getFromls(){
+           let cart = localStorage.getItem('cart')
+           if(cart){
+               this.testCart = JSON.parse(cart)
+               console.log('this is from ls',this.testCart)
+           }
+      },
+      deleteItem(payload){
+           let cart = localStorage.getItem('cart')
+           this.testCart = [...JSON.parse(cart)]
+           let index = this.testCart.findIndex(product=>product.id === payload.id)
+           this.testCart.splice(index,1)
+           const sum = this.testCart.reduce(
+            (accumulator, currentValue) => accumulator + (currentValue.defaultPrice*currentValue.qty),
+            0,);
+            this.Total = sum;
+            localStorage.setItem('Total',JSON.stringify(this.Total))
+           localStorage.setItem('cart',JSON.stringify(this.testCart)) 
+      },
+      getCompoundPrice(){
+          for(let item of this.testCart){
+              this.Total += item.defaultPrice * item.qty
           }
-         })
-         console.log(this.Cart)
+          console.log(this.Total)
+          localStorage.setItem('Total',JSON.stringify(this.Total))
+      },
+      increaseqty(product){
+          //get the qty and increase
+           product.qty++
+           const sum = this.testCart.reduce(
+            (accumulator, currentValue) => accumulator + (currentValue.defaultPrice*currentValue.qty),
+            0,);
+            this.Total = sum;
+            localStorage.setItem('Total',JSON.stringify(this.Total))
+           localStorage.setItem('cart',JSON.stringify(this.testCart))
+      },
+      decreaseqty(product){
+         if(product.qty>1){
+            product.qty--
+            const sum = this.testCart.reduce(
+              (accumulator,currentValue)=>accumulator + (currentValue.defaultPrice*currentValue.qty),0);
+            this.Total = sum;
+            localStorage.setItem('Total',JSON.stringify(this.Total))
+            localStorage.setItem('cart',JSON.stringify(this.testCart)) 
+         }
       }
    },
 
    computed:{
-    ...mapGetters(['getCart','GetTotal'])
+      
+    //...mapGetters(['getCart','GetTotal']),
    },
    created(){
-    this.getUserCart()
-    this.getPrice()
-    this.mail()
-    this.docRef()
+   // this.getUserCart()
+    //this.getPrice()
+    //this.mail()
+    //this.docRef()
+    this.getFromls()
+    this.getCompoundPrice()
    },
   
 }
@@ -221,18 +304,3 @@ form {
 
 
 
-// increaseValue() {
-//   var value = parseInt(document.getElementById('number').value, 10);
-//   value = isNaN(value) ? 0 : value;
-//   value++;
-//   document.getElementById('number').value = value;
-//   console.log(value)
-// },
-// decreaseValue() {
-// var value = parseInt(document.getElementById('number').value, 10);
-// value = isNaN(value) ? 0 : value;
-// value < 1 ? value = 1 : '';
-// value--;
-// document.getElementById('number').value = value;
-// console.log(value)
-// },

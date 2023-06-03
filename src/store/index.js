@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import {app as app} from '../../firebase'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, getDocs,getFirestore,query,where,updateDoc,doc } from "firebase/firestore"; 
-
+import router from '../router/index'
 import jwt_decode from 'jwt-decode'
 
 
@@ -13,7 +13,7 @@ import jwt_decode from 'jwt-decode'
 const db = getFirestore(app);
 const auth = getAuth(app);
 Vue.use(Vuex)
-
+let shippingDetail = {}
 export default new Vuex.Store({
   state: {
     products:[],
@@ -33,7 +33,7 @@ export default new Vuex.Store({
     processed:[],
     Delivery:[],
     SitePick:[],
-    shippingDetails:[],
+    shippingDetail:[],
     Orderref:'',
     allOrders:[]
   },
@@ -52,19 +52,28 @@ export default new Vuex.Store({
     getAllOrders:(state)=>state.allOrders
   },
   mutations: {
-   check(Token,state){
-    if(Token){
-      state.loggedin = true
-      return true
-    }
+   check(){
+      let Token = localStorage.getItem('signinToken')
+      if(Token){
+         console.log('loggedin')
+        return true
+      }else{
+         if(!Token){
+           return false
+         }
+      }
    },
    firestoredata(state,payload){
-    payload.forEach((doc)=>{     
-      state.products.push(doc.data());
+    payload.forEach((doc)=>{   
+       for(let item of doc.data().products){
+         state.products.push(item)
+       } 
+     
     })
    },
 
    async addToFirestore(state,payload){
+     console.log('this is in the addToFirestore',payload)
     let mail =  function(){
      let signinToken = localStorage.getItem('signinToken')
      let DecryptedToken = jwt_decode(signinToken)
@@ -280,6 +289,7 @@ export default new Vuex.Store({
   async getShippingAddress(state,payload){
     //const querySnapshot = await getDocs(collection(db, "Address"));
      payload.forEach((doc)=>{
+       console.log(doc.data())
         for(let item of doc.data().Addresses){
             state.ShippingAddresses.push(item.Address)
         }
@@ -395,8 +405,8 @@ export default new Vuex.Store({
           }
         }  
      let handler = PaystackPop.setup({
-      key:'pk_live_004ba48b4bfb284f5793fb8948e49598bb572744',
-      email:payload.email,
+      key:'pk_live_25efa6b8308a019542749ab1828130194d21553d',
+      email:shippingDetail.email, 
       amount:payload.amount,
       ref:''+Math.floor((Math.random() * 1000000000) + 1),
       onClose: function() {
@@ -448,18 +458,27 @@ export default new Vuex.Store({
    
       const querySnapshot = await getDocs(q)
       querySnapshot.forEach((doc)=>{
-        for(let item of doc.data().shippingDetails)
-        {
-          state.shippingDetails.push(item)
-        }
+         shippingDetail.Delivery=doc.data().shippingDetails.Delivery
+         shippingDetail.shippingAddress=doc.data().shippingDetails.shippingAddress
+         shippingDetail.shippingEmail=doc.data().shippingDetails.shippingEmail
+         shippingDetail.shippingmobile=doc.data().shippingDetails.shippingmobile
+        // console.log(state.shippingDetail)
       })
-      state.shippingDetails[0].shippingAddress = payload.address
-      state.shippingDetails[0].shippingEmail =payload.email
-      state.shippingDetails[0].shippingmobile = payload.mobile
-      updateDoc(usercartref,{
-        shippingDetails:state.shippingDetails[0]
-      })
-      this.$router.push('/payment')
+    // console.log(state.shippingDetail)
+      state.shippingDetail.address = payload.address
+     //shippingAdd[0].shippingAddress = payload.address
+     shippingDetail.email = payload.email
+      //state.shippingAdd[0].shippingEmail =payload.email
+      shippingDetail.mobile = payload.mobile
+      //state.shippingAdd[0].shippingmobile = payload.mobile
+      console.log('this is the final test detail=>',shippingDetail)
+      // updateDoc(usercartref,{
+       //shippingDetails:state.shippingDetails[0]
+      // // shippingDetails:state.shippingDetail
+      // })
+      //this.$router.push('/')
+     
+      router.push('/payment')
   },
    async userid(state,payload){
      const email = function(){
@@ -478,13 +497,23 @@ export default new Vuex.Store({
      return userid
      
    },
+   addoffline(payload){
+      console.log(payload)
+      // let find=false
+      //  let unprocessedcart = localStorage.getItem('cart')
+      //   if(unprocessedcart){
+      //       let cart = JSON.parse(unprocessedcart)
+      //      for(let item of cart){
+      //         console.log(item.id)
+      //      }   
+      //      //console.log('this is the product',payload)
+      //   }
+   }
 
   },
   actions: {
    checklogin({commit}){
-     let Token = localStorage.getItem('signinToken');
-      Token = JSON.stringify(Token);
-      commit('check',Token)
+      commit('check')   
    },
    async getProductsfromfirebase({commit}){
     const querySnapshot = await getDocs(collection(db,"products"));
@@ -500,13 +529,14 @@ export default new Vuex.Store({
    commit('userid',querySnapshot)
   },
   addToFirestore({commit},payload){
+      
         let signinToken = localStorage.getItem('signinToken')
          if(signinToken){
              let DecryptedToken = jwt_decode(signinToken)
              let email = DecryptedToken.email
-           commit('addToFirestore',payload)
+           this.dispatch('addToFirestore',payload)
          }else{
-           alert('sign-in')
+          // this.dispatch('addoffline',payload)  seem to be pulling unknown payload
          }
   },
   getUserCart({commit}){
@@ -583,9 +613,48 @@ export default new Vuex.Store({
       } catch (error) {
         console.log(error)
       }
+    },
+    addoffline({commit},payload){
+       commit('addoffline',payload)
     }
   }
 })
+
+//work purely offline and buy stuff 
+//only form cart when u add to cart
+//add remove
+//increase
+//and work generally with the localstorage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //changing pending to allOrders and work with pending diffrently

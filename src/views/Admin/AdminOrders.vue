@@ -2,52 +2,25 @@
     <div class="orders bg-primary-light " style="height:100vh;">
         <div class="card-body bg-light rounded">
                 <h5 class="card-title">Orders</h5>
-
+                <button class="btn btn" @click="getCompleted">Completed</button>
+                <button class="btn btn" @click="getPending">Pending</button>
                 <table class="table table-borderless datatable">
                   <thead>
                     <tr>
                       <th scope="col">#</th>
                       <th scope="col">Customer</th>
-                      <th scope="col">Product</th>
+                      <th scope="col">Address</th>
                       <th scope="col">Price</th>
-                      <th scope="col">Status</th>
+                      <th scope="col">Pending</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <th scope="row"><a href="#">#2457</a></th>
-                      <td>Brandon Jacob</td>
-                      <td><a href="#" class="text-primary">At praesentium minu</a></td>
-                      <td>$64</td>
-                      <td><span class="badge bg-success">Approved</span></td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2147</a></th>
-                      <td>Bridie Kessler</td>
-                      <td><a href="#" class="text-primary">Blanditiis dolor omnis similique</a></td>
-                      <td>$47</td>
-                      <td><span class="badge bg-warning">Pending</span></td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2049</a></th>
-                      <td>Ashleigh Langosh</td>
-                      <td><a href="#" class="text-primary">At recusandae consectetur</a></td>
-                      <td>$147</td>
-                      <td><span class="badge bg-success">Approved</span></td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2644</a></th>
-                      <td>Angus Grady</td>
-                      <td><a href="#" class="text-primar">Ut voluptatem id earum et</a></td>
-                      <td>$67</td>
-                      <td><span class="badge bg-danger">Rejected</span></td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2644</a></th>
-                      <td>Raheem Lehner</td>
-                      <td><a href="#" class="text-primary">Sunt similique distinctio</a></td>
-                      <td>$165</td>
-                      <td><span class="badge bg-success">Approved</span></td>
+                    <tr v-for="(order,i) in Orders" :key="i">
+                      <th scope="row"><a href="#">#{{ i+1}}</a></th>
+                      <router-link :to="`/order/${order.id}`"><td>{{ order.Shippingdetail.Email }}</td></router-link>
+                      <td><a href="#" class="text-primary">{{ order.Shippingdetail.Address }}</a></td>
+                      <td>N{{ order.Total }}</td>
+                      <td><span class="badge bg-success">{{ order.Pending }}</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -57,9 +30,46 @@
 </template>
 
 <script>
-
+import {app as app} from '../../../firebase'
+import { collection, getDocs,getFirestore,query,where,updateDoc,doc,arrayUnion } from "firebase/firestore"; 
+const db = getFirestore(app);
 export default {
     name:'AdminOrders',
+    data(){
+      return{
+          Orders:[],
+          Completed:[],
+          Pending:[],
+          id:this.$route.params
+      }
+    },
+    methods:{
+         async getAllOrders(){
+             const querySnapshot = await getDocs(collection(db,"Orders"))
+             querySnapshot.forEach((doc)=>{
+                 for(let item of doc.data().Order){
+                    this.Orders.push(item)
+                    if(!item.Pending){
+                      this.Completed.push(item)
+                    }
+                    if(item.Pending){
+                       this.Pending.push(item)
+                    }
+                 }
+                
+             })
+         },
+         getCompleted(){
+          this.Orders = this.Completed
+         },
+          getPending(){
+              this.Order = this.Pending
+         }
+    },
+    created(){
+       this.getAllOrders();
+      // this.getCompleted();
+    }
 }
 </script>
 
